@@ -1,0 +1,176 @@
+
+import { useState, useEffect, useRef } from "react";
+import { useStudy } from "@/context/StudyContext";
+import { Subject, ContentType } from "@/types/study";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Play, Pause, Save } from "lucide-react";
+
+const contentTypes: { value: ContentType; label: string }[] = [
+  { value: 'video', label: 'Vídeo' },
+  { value: 'leitura', label: 'Leitura' },
+  { value: 'exercício', label: 'Exercício' },
+  { value: 'revisão', label: 'Revisão' },
+  { value: 'outro', label: 'Outro' },
+];
+
+const StudyTimer = () => {
+  const { subjects, addSession } = useStudy();
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [selectedContentType, setSelectedContentType] = useState<ContentType>('leitura');
+  const [isRunning, setIsRunning] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const [sessionSaved, setSessionSaved] = useState(false);
+  
+  const intervalRef = useRef<number | null>(null);
+  
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        window.clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+  
+  const toggleTimer = () => {
+    if (isRunning) {
+      if (intervalRef.current) window.clearInterval(intervalRef.current);
+      setIsRunning(false);
+    } else {
+      intervalRef.current = window.setInterval(() => {
+        setSeconds(prevSeconds => prevSeconds + 1);
+      }, 1000);
+      setIsRunning(true);
+      setSessionSaved(false);
+    }
+  };
+  
+  const saveSession = () => {
+    if (!selectedSubject || seconds === 0) return;
+    
+    addSession({
+      date: new Date().toISOString(),
+      subject: selectedSubject,
+      contentType: selectedContentType,
+      duration: seconds,
+    });
+    
+    setSeconds(0);
+    setIsRunning(false);
+    setSessionSaved(true);
+    
+    if (intervalRef.current) {
+      window.clearInterval(intervalRef.current);
+    }
+  };
+  
+  const formatTime = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+  
+  return (
+    <Card className="glass-card w-full max-w-3xl mx-auto rounded-xl">
+      <CardContent className="p-8 flex flex-col items-center">
+        <div className="flex flex-col md:flex-row w-full gap-4 mb-12">
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">Matéria</label>
+            <Select 
+              value={selectedSubject?.id || ""}
+              onValueChange={(value) => {
+                const subject = subjects.find(s => s.id === value);
+                setSelectedSubject(subject || null);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione a matéria" />
+              </SelectTrigger>
+              <SelectContent>
+                {subjects.map((subject) => (
+                  <SelectItem key={subject.id} value={subject.id}>
+                    <div className="flex items-center">
+                      <span 
+                        className="w-3 h-3 rounded-full mr-2" 
+                        style={{ backgroundColor: subject.color }}
+                      ></span>
+                      {subject.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">Tipo de Conteúdo</label>
+            <Select 
+              value={selectedContentType}
+              onValueChange={(value) => setSelectedContentType(value as ContentType)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                {contentTypes.map((contentType) => (
+                  <SelectItem key={contentType.value} value={contentType.value}>
+                    {contentType.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <div className="text-center mb-12">
+          <div className="text-7xl font-medium tracking-tighter mb-6">{formatTime(seconds)}</div>
+          
+          <div className="flex gap-3 justify-center">
+            <Button
+              size="lg"
+              variant="outline" 
+              className={`px-8 py-6 rounded-full text-lg ${
+                isRunning ? "border-red-400 text-red-600" : "border-green-400 text-green-600"
+              }`}
+              onClick={toggleTimer}
+              disabled={!selectedSubject}
+            >
+              {isRunning ? (
+                <><Pause className="mr-2" size={20} /> Pausar</>
+              ) : (
+                <><Play className="mr-2" size={20} /> Iniciar</>
+              )}
+            </Button>
+            
+            <Button
+              size="lg"
+              variant="default"
+              className="gradient-purple-blue px-8 py-6 rounded-full text-lg"
+              onClick={saveSession}
+              disabled={seconds === 0 || !selectedSubject}
+            >
+              <Save className="mr-2" size={20} /> Salvar Sessão
+            </Button>
+          </div>
+          
+          {!selectedSubject && (
+            <p className="text-sm text-muted-foreground mt-4">
+              Selecione uma matéria para começar
+            </p>
+          )}
+          
+          {sessionSaved && (
+            <p className="text-sm text-green-600 mt-4">
+              Sessão salva com sucesso!
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default StudyTimer;
