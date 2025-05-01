@@ -11,29 +11,44 @@ import AppLayout from "./components/layout/AppLayout";
 import TimerPage from "./pages/TimerPage";
 import ReportsPage from "./pages/ReportsPage";
 import HistoryPage from "./pages/HistoryPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import PricingPage from "./pages/PricingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <StudyProvider>
-        <BrowserRouter>
-          <AppLayout>
+const App = () => {
+  // Determine which routes should be inside the AppLayout
+  const AuthenticatedRoutes = () => (
+    <AppLayout>
+      <Routes>
+        <Route path="/" element={<TimerPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+      </Routes>
+    </AppLayout>
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <StudyProvider>
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={<TimerPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/*" element={<AuthenticatedRoutes />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </AppLayout>
-        </BrowserRouter>
-      </StudyProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+          </BrowserRouter>
+        </StudyProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

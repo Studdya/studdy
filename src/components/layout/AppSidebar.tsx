@@ -1,6 +1,6 @@
 
-import { Link, useLocation } from "react-router-dom";
-import { Clock, Calendar, CalendarDays, ChartBar } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Clock, Calendar, CalendarDays, ChartBar, DollarSign, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,10 +13,12 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   
   const menuItems = [
     {
@@ -34,7 +36,18 @@ const AppSidebar = () => {
       path: "/history",
       icon: CalendarDays,
     },
+    {
+      title: "Planos",
+      path: "/pricing",
+      icon: DollarSign,
+    },
   ];
+
+  const handleLogout = () => {
+    // TODO: Implement Supabase logout here after integration
+    console.log("Logout");
+    navigate("/login");
+  };
 
   return (
     <Sidebar>
@@ -75,13 +88,24 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
         
-        <div className="mt-12 px-4">
+        <div className="mt-8 px-4">
           <div className="rounded-xl bg-accent p-4 text-sm">
             <h3 className="font-medium mb-1 text-accent-foreground">Dica do dia</h3>
             <p className="text-muted-foreground">
               Alternar entre matérias diferentes pode ajudar a manter o foco e melhorar a retenção de informação.
             </p>
           </div>
+        </div>
+
+        <div className="mt-auto px-4 pt-8">
+          <Button 
+            variant="outline" 
+            className="w-full flex items-center justify-center gap-2" 
+            onClick={handleLogout}
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sair</span>
+          </Button>
         </div>
       </SidebarContent>
     </Sidebar>
