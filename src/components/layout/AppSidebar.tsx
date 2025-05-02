@@ -1,6 +1,6 @@
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Clock, Calendar, CalendarDays, ChartBar, DollarSign, LogOut } from "lucide-react";
+import { Clock, Calendar, CalendarDays, ChartBar, MessageCircleQuestion, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -36,17 +36,18 @@ const AppSidebar = () => {
       path: "/history",
       icon: CalendarDays,
     },
-    {
-      title: "Planos",
-      path: "/pricing",
-      icon: DollarSign,
-    },
   ];
 
   const handleLogout = () => {
     // TODO: Implement Supabase logout here after integration
     console.log("Logout");
     navigate("/login");
+  };
+
+  const handleSupport = () => {
+    // Open support dialog or redirect to support page
+    console.log("Support requested");
+    window.open("mailto:suporte@estudos.app", "_blank");
   };
 
   return (
@@ -97,7 +98,16 @@ const AppSidebar = () => {
           </div>
         </div>
 
-        <div className="mt-auto px-4 pt-8">
+        <div className="mt-auto px-4 pt-4 flex flex-col gap-3">
+          <Button 
+            variant="outline" 
+            className="w-full flex items-center justify-center gap-2" 
+            onClick={handleSupport}
+          >
+            <MessageCircleQuestion className="h-4 w-4" />
+            <span>Suporte</span>
+          </Button>
+          
           <Button 
             variant="outline" 
             className="w-full flex items-center justify-center gap-2" 
