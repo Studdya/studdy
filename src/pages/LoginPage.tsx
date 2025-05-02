@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { ExternalLink } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Digite um email válido"),
@@ -48,6 +49,10 @@ const LoginPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleViewPricing = () => {
+    window.open("https://studdy.framer.ai/#pricing", "_blank");
   };
 
   return (
@@ -123,21 +128,11 @@ const LoginPage = () => {
           <div className="mt-6">
             <Button
               variant="outline"
-              className="w-full"
-              onClick={() => navigate("/register")}
+              className="w-full flex items-center justify-center gap-2"
+              onClick={handleViewPricing}
               disabled={isLoading}
             >
-              Criar uma conta
-            </Button>
-          </div>
-          
-          <div className="mt-4">
-            <Button
-              variant="ghost"
-              className="w-full text-sm"
-              onClick={() => navigate("/pricing")}
-              disabled={isLoading}
-            >
+              <ExternalLink className="h-4 w-4" />
               Ver planos disponíveis
             </Button>
           </div>
