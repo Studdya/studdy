@@ -12,7 +12,6 @@ import TimerPage from "./pages/TimerPage";
 import ReportsPage from "./pages/ReportsPage";
 import HistoryPage from "./pages/HistoryPage";
 import LoginPage from "./pages/LoginPage";
-import PricingPage from "./pages/PricingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,8 +37,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/*" element={<AuthenticatedRoutes />} />
+              <Route path="/" element={<AuthenticatedRoutes />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
@@ -50,3 +48,4 @@ const App = () => {
 };
 
 export default App;
+
