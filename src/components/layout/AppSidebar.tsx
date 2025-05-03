@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const AppSidebar = () => {
   const location = useLocation();
@@ -39,15 +40,20 @@ const AppSidebar = () => {
     },
   ];
 
-  const handleLogout = () => {
-    // TODO: Implement Supabase logout here after integration
-    console.log("Logout");
-    
-    // Clear authentication state
-    localStorage.removeItem('isAuthenticated');
-    toast.success("Logout realizado com sucesso!");
-    
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      // Use Supabase to sign out
+      await supabase.auth.signOut();
+      
+      // Clear authentication state
+      localStorage.removeItem('isAuthenticated');
+      toast.success("Logout realizado com sucesso!");
+      
+      navigate("/login");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      toast.error("Erro ao fazer logout. Tente novamente.");
+    }
   };
 
   const handleSupport = () => {

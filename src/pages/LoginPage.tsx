@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ExternalLink } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const loginSchema = z.object({
   email: z.string().email("Digite um email válido"),
@@ -36,24 +37,33 @@ const LoginPage = () => {
     },
   });
 
-  // Removed problematic useEffect that was causing infinite loops
-
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      // TODO: Implement Supabase authentication here after integration
-      console.log("Login data:", data);
+      // Use Supabase to sign in
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
       
-      // For now, we'll simulate a successful login
-      localStorage.setItem('isAuthenticated', 'true');
+      if (error) {
+        throw new Error(error.message);
+      }
       
-      toast.success("Login realizado com sucesso!");
-      
-      // Immediate navigation to dashboard
-      navigate("/dashboard");
+      if (authData.session) {
+        // Set authentication state
+        localStorage.setItem('isAuthenticated', 'true');
+        
+        toast.success("Login realizado com sucesso!");
+        
+        // Navigate to dashboard
+        navigate("/dashboard");
+      } else {
+        throw new Error("Falha na autenticação. Tente novamente.");
+      }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      toast.error("Erro ao fazer login. Tente novamente.");
+      toast.error(error instanceof Error ? error.message : "Erro ao fazer login. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
