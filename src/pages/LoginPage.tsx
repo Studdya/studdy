@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -36,13 +36,7 @@ const LoginPage = () => {
     },
   });
 
-  // Check if already authenticated on component mount
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [navigate]);
+  // Removed problematic useEffect that was causing infinite loops
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
@@ -54,9 +48,9 @@ const LoginPage = () => {
       localStorage.setItem('isAuthenticated', 'true');
       
       toast.success("Login realizado com sucesso!");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 500);
+      
+      // Immediate navigation to dashboard
+      navigate("/dashboard");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       toast.error("Erro ao fazer login. Tente novamente.");
