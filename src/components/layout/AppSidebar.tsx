@@ -1,4 +1,3 @@
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Clock, Calendar, CalendarDays, ChartBar, MessageCircleQuestion, LogOut } from "lucide-react";
 import {
@@ -57,9 +56,8 @@ const AppSidebar = () => {
   };
 
   const handleSupport = () => {
-    // Open support dialog or redirect to support page
-    console.log("Support requested");
-    window.open("mailto:suporte@estudos.app", "_blank");
+    // Redirect to the Studdy support page
+    window.open("https://bio.site/Studdy", "_blank");
   };
 
   return (
