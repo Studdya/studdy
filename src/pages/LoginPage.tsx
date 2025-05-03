@@ -41,8 +41,12 @@ const LoginPage = () => {
     try {
       // TODO: Implement Supabase authentication here after integration
       console.log("Login data:", data);
+      
+      // For now, we'll simulate a successful login
+      localStorage.setItem('isAuthenticated', 'true');
+      
       toast.success("Login realizado com sucesso!");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       toast.error("Erro ao fazer login. Tente novamente.");

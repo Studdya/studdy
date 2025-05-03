@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const AppSidebar = () => {
   const location = useLocation();
@@ -23,17 +24,17 @@ const AppSidebar = () => {
   const menuItems = [
     {
       title: "Cronômetro",
-      path: "/",
+      path: "/dashboard",
       icon: Clock,
     },
     {
       title: "Relatório Mensal",
-      path: "/reports",
+      path: "/dashboard/reports",
       icon: ChartBar,
     },
     {
       title: "Histórico",
-      path: "/history",
+      path: "/dashboard/history",
       icon: CalendarDays,
     },
   ];
@@ -41,6 +42,11 @@ const AppSidebar = () => {
   const handleLogout = () => {
     // TODO: Implement Supabase logout here after integration
     console.log("Logout");
+    
+    // Clear authentication state
+    localStorage.removeItem('isAuthenticated');
+    toast.success("Logout realizado com sucesso!");
+    
     navigate("/login");
   };
 
