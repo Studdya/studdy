@@ -63,9 +63,7 @@ const LoginPage = () => {
         <div className="text-center">
           
           <h2 className="mt-6 text-3xl font-bold text-gray-900">Salve, Seja Bem-Vindo!</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Faça login para continuar seus estudos
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Conecte sua conta para continuarmos seus estudos</p>
         </div>
 
         <Form {...form}>
