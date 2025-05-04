@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { useStudy } from "@/context/StudyContext";
 import { ContentType } from "@/types/study";
+import { toast } from "sonner";
 
 interface AddSessionDialogProps {
   isOpen: boolean;
@@ -31,7 +32,10 @@ const AddSessionDialog = ({ isOpen, onClose }: AddSessionDialogProps) => {
   
   const handleSubmit = () => {
     const subject = subjects.find(s => s.id === selectedSubject);
-    if (!subject) return;
+    if (!subject) {
+      toast.error("Por favor, selecione uma matéria válida");
+      return;
+    }
     
     // Convert hours and minutes to seconds
     const totalSeconds = (parseInt(hours) * 3600) + (parseInt(minutes) * 60);
