@@ -2,6 +2,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { StudySession, Subject, ContentType } from "@/types/study";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // Default subjects
 const defaultSubjects: Subject[] = [
@@ -23,65 +25,235 @@ interface StudyContextType {
   getSessionsByDateRange: (startDate: Date, endDate: Date) => StudySession[];
   getTotalDurationBySubject: (subjectId: string) => number;
   getStudyDays: (month: number, year: number) => number;
+  loading: boolean;
 }
 
 const StudyContext = createContext<StudyContextType | undefined>(undefined);
 
-const loadFromLocalStorage = <T,>(key: string, defaultValue: T): T => {
-  const stored = localStorage.getItem(key);
-  if (!stored) return defaultValue;
-  try {
-    return JSON.parse(stored);
-  } catch (e) {
-    console.error("Error loading from localStorage:", e);
-    return defaultValue;
-  }
-};
-
 export const StudyProvider = ({ children }: { children: ReactNode }) => {
-  const [sessions, setSessions] = useState<StudySession[]>(() => loadFromLocalStorage("study_sessions", []));
-  const [subjects, setSubjects] = useState<Subject[]>(() => loadFromLocalStorage("study_subjects", defaultSubjects));
-  const { toast } = useToast();
+  const [sessions, setSessions] = useState<StudySession[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast: uiToast } = useToast();
 
-  // Save to localStorage when data changes
+  // Carregar dados do Supabase quando o usuário estiver autenticado
   useEffect(() => {
-    localStorage.setItem("study_sessions", JSON.stringify(sessions));
-  }, [sessions]);
-
-  useEffect(() => {
-    localStorage.setItem("study_subjects", JSON.stringify(subjects));
-  }, [subjects]);
-
-  const addSession = (session: Omit<StudySession, "id">) => {
-    const newSession = {
-      ...session,
-      id: crypto.randomUUID()
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Verificar se o usuário está autenticado
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          console.log("Usuário não autenticado");
+          setLoading(false);
+          return;
+        }
+        
+        // Carregar disciplinas (subjects)
+        const { data: subjectsData, error: subjectsError } = await supabase
+          .from('subjects')
+          .select('*');
+        
+        if (subjectsError) {
+          throw subjectsError;
+        }
+        
+        if (subjectsData && subjectsData.length > 0) {
+          // Converter dados do formato da tabela para o formato da aplicação
+          const formattedSubjects: Subject[] = subjectsData.map(subject => ({
+            id: subject.id,
+            name: subject.name,
+            color: subject.color
+          }));
+          setSubjects(formattedSubjects);
+        } else {
+          // Se não existirem matérias, cadastrar as matérias padrão
+          await createDefaultSubjects(session.user.id);
+          setSubjects(defaultSubjects);
+        }
+        
+        // Carregar sessões de estudo
+        const { data: sessionsData, error: sessionsError } = await supabase
+          .from('study_sessions')
+          .select(`
+            id,
+            date,
+            duration,
+            content_type,
+            subjects (
+              id,
+              name,
+              color
+            )
+          `);
+        
+        if (sessionsError) {
+          throw sessionsError;
+        }
+        
+        if (sessionsData) {
+          // Converter dados do formato da tabela para o formato da aplicação
+          const formattedSessions: StudySession[] = sessionsData.map(session => ({
+            id: session.id,
+            date: session.date,
+            duration: session.duration,
+            contentType: session.content_type as ContentType,
+            subject: {
+              id: session.subjects.id,
+              name: session.subjects.name,
+              color: session.subjects.color
+            }
+          }));
+          setSessions(formattedSessions);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+        toast.error("Erro ao carregar seus dados de estudo");
+      } finally {
+        setLoading(false);
+      }
     };
-    setSessions(prev => [...prev, newSession]);
-    toast({
-      title: "Sessão de estudo salva",
-      description: `${session.subject.name} - ${formatMinutes(session.duration / 60)}`,
+    
+    fetchData();
+    
+    // Configurar listener para mudanças de autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      fetchData();
     });
+    
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+  
+  // Função para criar as matérias padrão para um novo usuário
+  const createDefaultSubjects = async (userId: string) => {
+    try {
+      for (const subject of defaultSubjects) {
+        const { error } = await supabase
+          .from('subjects')
+          .insert({
+            name: subject.name,
+            color: subject.color,
+            user_id: userId
+          });
+          
+        if (error) throw error;
+      }
+    } catch (error) {
+      console.error("Erro ao criar disciplinas padrão:", error);
+    }
   };
 
-  const addManualSession = (session: Omit<StudySession, "id">) => {
-    const newSession = {
-      ...session,
-      id: crypto.randomUUID()
-    };
-    setSessions(prev => [...prev, newSession]);
-    toast({
-      title: "Sessão manual adicionada",
-      description: `${session.subject.name} - ${formatMinutes(session.duration / 60)}`,
-    });
+  const addSession = async (session: Omit<StudySession, "id">) => {
+    try {
+      // Verificar se o usuário está autenticado
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("Você precisa estar logado para salvar sessões de estudo");
+        return;
+      }
+      
+      // Inserir sessão no Supabase
+      const { data, error } = await supabase
+        .from('study_sessions')
+        .insert({
+          subject_id: session.subject.id,
+          content_type: session.contentType,
+          duration: session.duration,
+          date: session.date,
+          user_id: user.id
+        })
+        .select('id')
+        .single();
+      
+      if (error) throw error;
+      
+      // Adicionar sessão ao estado
+      const newSession = {
+        ...session,
+        id: data.id
+      };
+      
+      setSessions(prev => [...prev, newSession]);
+      
+      uiToast({
+        title: "Sessão de estudo salva",
+        description: `${session.subject.name} - ${formatMinutes(session.duration / 60)}`,
+      });
+    } catch (error) {
+      console.error("Erro ao salvar sessão:", error);
+      toast.error("Erro ao salvar sessão de estudo");
+    }
   };
 
-  const deleteSession = (id: string) => {
-    setSessions(prev => prev.filter(session => session.id !== id));
-    toast({
-      title: "Sessão removida",
-      description: "A sessão de estudo foi removida com sucesso.",
-    });
+  const addManualSession = async (session: Omit<StudySession, "id">) => {
+    try {
+      // Verificar se o usuário está autenticado
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("Você precisa estar logado para adicionar sessões de estudo");
+        return;
+      }
+      
+      // Inserir sessão no Supabase
+      const { data, error } = await supabase
+        .from('study_sessions')
+        .insert({
+          subject_id: session.subject.id,
+          content_type: session.contentType,
+          duration: session.duration,
+          date: session.date,
+          user_id: user.id
+        })
+        .select('id')
+        .single();
+      
+      if (error) throw error;
+      
+      // Adicionar sessão ao estado
+      const newSession = {
+        ...session,
+        id: data.id
+      };
+      
+      setSessions(prev => [...prev, newSession]);
+      
+      uiToast({
+        title: "Sessão manual adicionada",
+        description: `${session.subject.name} - ${formatMinutes(session.duration / 60)}`,
+      });
+    } catch (error) {
+      console.error("Erro ao adicionar sessão manual:", error);
+      toast.error("Erro ao adicionar sessão manual");
+    }
+  };
+
+  const deleteSession = async (id: string) => {
+    try {
+      // Deletar sessão no Supabase
+      const { error } = await supabase
+        .from('study_sessions')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      // Remover sessão do estado
+      setSessions(prev => prev.filter(session => session.id !== id));
+      
+      uiToast({
+        title: "Sessão removida",
+        description: "A sessão de estudo foi removida com sucesso.",
+      });
+    } catch (error) {
+      console.error("Erro ao remover sessão:", error);
+      toast.error("Erro ao remover sessão de estudo");
+    }
   };
 
   const getSessionsByMonth = (month: number, year: number) => {
@@ -129,6 +301,7 @@ export const StudyProvider = ({ children }: { children: ReactNode }) => {
         getSessionsByDateRange,
         getTotalDurationBySubject,
         getStudyDays,
+        loading
       }}
     >
       {children}

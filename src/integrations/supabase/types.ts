@@ -24,6 +24,68 @@ export type Database = {
         }
         Relationships: []
       }
+      study_sessions: {
+        Row: {
+          content_type: string
+          created_at: string
+          date: string
+          duration: number
+          id: string
+          subject_id: string
+          user_id: string
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          date?: string
+          duration: number
+          id?: string
+          subject_id: string
+          user_id: string
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          date?: string
+          duration?: number
+          id?: string
+          subject_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sessions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subjects: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color: string
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
