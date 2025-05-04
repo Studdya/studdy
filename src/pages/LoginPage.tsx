@@ -1,61 +1,48 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
 const loginSchema = z.object({
   email: z.string().email("Digite um email válido"),
-  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres")
 });
-
 type LoginFormValues = z.infer<typeof loginSchema>;
-
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: "",
-    },
+      password: ""
+    }
   });
-
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
       // Use Supabase to sign in
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
+      const {
+        data: authData,
+        error
+      } = await supabase.auth.signInWithPassword({
         email: data.email,
-        password: data.password,
+        password: data.password
       });
-      
       if (error) {
         throw new Error(error.message);
       }
-      
       if (authData.session) {
         // Set authentication state
         localStorage.setItem('isAuthenticated', 'true');
-        
         toast.success("Login realizado com sucesso!");
-        
+
         // Navigate to dashboard
         navigate("/dashboard");
       } else {
@@ -68,19 +55,14 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
-
   const handleViewPricing = () => {
     window.open("https://studdy.framer.ai/#pricing", "_blank");
   };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
         <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
-            <span className="text-white text-xl font-bold">E</span>
-          </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Bem-vindo de volta</h2>
+          
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">Salve, Seja Bem-Vindo!</h2>
           <p className="mt-2 text-sm text-gray-600">
             Faça login para continuar seus estudos
           </p>
@@ -88,42 +70,25 @@ const LoginPage = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
+            <FormField control={form.control} name="email" render={({
+            field
+          }) => <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="seu@email.com" 
-                      {...field} 
-                      disabled={isLoading}
-                    />
+                    <Input placeholder="seu@email.com" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
+                </FormItem>} />
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
+            <FormField control={form.control} name="password" render={({
+            field
+          }) => <FormItem>
                   <FormLabel>Senha</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••" 
-                      {...field} 
-                      disabled={isLoading}
-                    />
+                    <Input type="password" placeholder="••••••" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
+                </FormItem>} />
 
             <div>
               <Button type="submit" className="w-full" disabled={isLoading}>
@@ -144,20 +109,13 @@ const LoginPage = () => {
           </div>
 
           <div className="mt-6">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-              onClick={handleViewPricing}
-              disabled={isLoading}
-            >
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2" onClick={handleViewPricing} disabled={isLoading}>
               <ExternalLink className="h-4 w-4" />
               Ver planos disponíveis
             </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default LoginPage;
