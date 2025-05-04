@@ -40,17 +40,22 @@ const AddSessionDialog = ({ isOpen, onClose }: AddSessionDialogProps) => {
     // Convert hours and minutes to seconds
     const totalSeconds = (parseInt(hours) * 3600) + (parseInt(minutes) * 60);
     
-    // Create study session
-    addManualSession({
-      date: new Date(date).toISOString(),
-      subject,
-      contentType: selectedContentType,
-      duration: totalSeconds,
-    });
-    
-    // Reset form and close dialog
-    resetForm();
-    onClose();
+    try {
+      // Create study session
+      addManualSession({
+        date: new Date(date).toISOString(),
+        subject,
+        contentType: selectedContentType,
+        duration: totalSeconds,
+      });
+      
+      // Reset form and close dialog
+      resetForm();
+      onClose();
+    } catch (error) {
+      console.error("Erro ao adicionar sessão:", error);
+      toast.error("Houve um erro ao adicionar a sessão manual");
+    }
   };
   
   const resetForm = () => {

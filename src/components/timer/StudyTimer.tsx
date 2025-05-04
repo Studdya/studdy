@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Play, Pause, Save } from "lucide-react";
+import { toast } from "sonner";
 
 const contentTypes: { value: ContentType; label: string }[] = [
   { value: 'video', label: 'Vídeo' },
@@ -47,21 +48,29 @@ const StudyTimer = () => {
   };
   
   const saveSession = () => {
-    if (!selectedSubject || seconds === 0) return;
+    if (!selectedSubject || seconds === 0) {
+      toast.error("Selecione uma matéria e garanta que o tempo seja maior que zero");
+      return;
+    }
     
-    addSession({
-      date: new Date().toISOString(),
-      subject: selectedSubject,
-      contentType: selectedContentType,
-      duration: seconds,
-    });
-    
-    setSeconds(0);
-    setIsRunning(false);
-    setSessionSaved(true);
-    
-    if (intervalRef.current) {
-      window.clearInterval(intervalRef.current);
+    try {
+      addSession({
+        date: new Date().toISOString(),
+        subject: selectedSubject,
+        contentType: selectedContentType,
+        duration: seconds,
+      });
+      
+      setSeconds(0);
+      setIsRunning(false);
+      setSessionSaved(true);
+      
+      if (intervalRef.current) {
+        window.clearInterval(intervalRef.current);
+      }
+    } catch (error) {
+      console.error("Erro ao salvar sessão:", error);
+      toast.error("Houve um erro ao salvar a sessão de estudo");
     }
   };
   
