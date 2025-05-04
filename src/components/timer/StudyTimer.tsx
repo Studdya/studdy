@@ -4,9 +4,10 @@ import { useStudy } from "@/context/StudyContext";
 import { Subject, ContentType } from "@/types/study";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, Pause, Save } from "lucide-react";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Play, Pause, Save, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
+import AddSubjectDialog from "@/components/subjects/AddSubjectDialog";
 
 const contentTypes: { value: ContentType; label: string }[] = [
   { value: 'video', label: 'Vídeo' },
@@ -23,6 +24,7 @@ const StudyTimer = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [sessionSaved, setSessionSaved] = useState(false);
+  const [isAddSubjectDialogOpen, setIsAddSubjectDialogOpen] = useState(false);
   
   const intervalRef = useRef<number | null>(null);
   
@@ -35,6 +37,11 @@ const StudyTimer = () => {
   }, []);
   
   const toggleTimer = () => {
+    if (!selectedSubject) {
+      toast.error("Selecione uma matéria para iniciar o cronômetro");
+      return;
+    }
+    
     if (isRunning) {
       if (intervalRef.current) window.clearInterval(intervalRef.current);
       setIsRunning(false);
@@ -47,14 +54,14 @@ const StudyTimer = () => {
     }
   };
   
-  const saveSession = () => {
+  const saveSession = async () => {
     if (!selectedSubject || seconds === 0) {
       toast.error("Selecione uma matéria e garanta que o tempo seja maior que zero");
       return;
     }
     
     try {
-      addSession({
+      await addSession({
         date: new Date().toISOString(),
         subject: selectedSubject,
         contentType: selectedContentType,
@@ -88,30 +95,43 @@ const StudyTimer = () => {
         <div className="flex flex-col md:flex-row w-full gap-4 mb-12">
           <div className="flex-1">
             <label className="block text-sm font-medium mb-1">Matéria</label>
-            <Select 
-              value={selectedSubject?.id || ""}
-              onValueChange={(value) => {
-                const subject = subjects.find(s => s.id === value);
-                setSelectedSubject(subject || null);
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecione a matéria" />
-              </SelectTrigger>
-              <SelectContent>
-                {subjects.map((subject) => (
-                  <SelectItem key={subject.id} value={subject.id}>
-                    <div className="flex items-center">
-                      <span 
-                        className="w-3 h-3 rounded-full mr-2" 
-                        style={{ backgroundColor: subject.color }}
-                      ></span>
-                      {subject.name}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex space-x-2">
+              <Select 
+                value={selectedSubject?.id || ""}
+                onValueChange={(value) => {
+                  const subject = subjects.find(s => s.id === value);
+                  setSelectedSubject(subject || null);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecione a matéria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Matérias</SelectLabel>
+                    {subjects.map((subject) => (
+                      <SelectItem key={subject.id} value={subject.id}>
+                        <div className="flex items-center">
+                          <span 
+                            className="w-3 h-3 rounded-full mr-2" 
+                            style={{ backgroundColor: subject.color }}
+                          ></span>
+                          {subject.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Button 
+                size="icon" 
+                variant="outline" 
+                onClick={() => setIsAddSubjectDialogOpen(true)}
+                title="Adicionar nova matéria"
+              >
+                <PlusCircle className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
           
           <div className="flex-1">
@@ -145,7 +165,6 @@ const StudyTimer = () => {
                 isRunning ? "border-red-400 text-red-600" : "border-green-400 text-green-600"
               }`}
               onClick={toggleTimer}
-              disabled={!selectedSubject}
             >
               {isRunning ? (
                 <><Pause className="mr-2" size={20} /> Pausar</>
@@ -178,6 +197,11 @@ const StudyTimer = () => {
           )}
         </div>
       </CardContent>
+      
+      <AddSubjectDialog 
+        isOpen={isAddSubjectDialogOpen} 
+        onClose={() => setIsAddSubjectDialogOpen(false)} 
+      />
     </Card>
   );
 };
