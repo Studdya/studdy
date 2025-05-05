@@ -64,7 +64,7 @@ const LoginPage = () => {
           <div className="flex justify-center mb-4">
             <img alt="Studdy Logo" className="h-16 w-16" src="https://lh3.google.com/u/0/d/16MyFrMLVgg911ua-b7PHltexc8RbbEZA=w1920-h945-iv1?auditContext=prefetch" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Salve, Seja Bem-Vindo!</h2>
+          <h2 className="text-3xl font-bold text-gray-900">Olá, Seja Bem- Vindo!</h2>
           <p className="mt-2 text-sm text-gray-600">
             Faça login para continuar seus estudos
           </p>
