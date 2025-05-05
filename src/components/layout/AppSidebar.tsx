@@ -54,7 +54,7 @@ const AppSidebar = () => {
       <SidebarHeader>
         <div className="flex items-center justify-between px-4 py-2">
           <div className="flex items-center space-x-2 bg-transparent">
-            <img alt="Studdy Logo" src="/lovable-uploads/1e9fb661-e9f5-4cc6-ab06-404627667bbe.png" className="h-10 w-10 rounded-md" />
+            <img alt="Studdy Logo" className="h-10 w-10 rounded-md" src="https://lh3.google.com/u/0/d/16MyFrMLVgg911ua-b7PHltexc8RbbEZA=w1920-h945-iv1?auditContext=prefetch" />
             <h1 className="text-gray-800 text-xl font-bold">Studdy</h1>
           </div>
           <SidebarTrigger />
