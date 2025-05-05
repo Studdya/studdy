@@ -1,13 +1,17 @@
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Clock, Calendar, CalendarDays, ChartBar, MessageCircleQuestion, LogOut } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
 const AppSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isMobile, setOpenMobile } = useSidebar();
+
   const menuItems = [{
     title: "Cronômetro",
     path: "/dashboard",
@@ -21,6 +25,7 @@ const AppSidebar = () => {
     path: "/dashboard/history",
     icon: CalendarDays
   }];
+
   const handleLogout = async () => {
     try {
       // Use Supabase to sign out
@@ -35,10 +40,19 @@ const AppSidebar = () => {
       toast.error("Erro ao fazer logout. Tente novamente.");
     }
   };
+
   const handleSupport = () => {
     // Redirect to the Studdy support page
     window.open("https://bio.site/Studdy", "_blank");
   };
+
+  // Função para fechar o menu móvel quando um item do menu é clicado
+  const handleMenuItemClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return <Sidebar>
       <SidebarHeader>
         <div className="flex items-center justify-between px-4 py-2">
@@ -59,7 +73,11 @@ const AppSidebar = () => {
             <SidebarMenu>
               {menuItems.map(item => <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
-                    <Link to={item.path} className={cn("flex items-center space-x-3 w-full", location.pathname === item.path ? "text-primary font-medium" : "")}>
+                    <Link 
+                      to={item.path} 
+                      className={cn("flex items-center space-x-3 w-full", location.pathname === item.path ? "text-primary font-medium" : "")}
+                      onClick={handleMenuItemClick}
+                    >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </Link>
@@ -92,4 +110,5 @@ const AppSidebar = () => {
       </SidebarContent>
     </Sidebar>;
 };
+
 export default AppSidebar;
