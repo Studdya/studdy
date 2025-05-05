@@ -7,6 +7,7 @@ import StudyBarChart from "@/components/reports/StudyBarChart";
 import StudySummaryCards from "@/components/reports/StudySummaryCards";
 import { useStudy } from "@/context/StudyContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Calendar as CalendarIcon } from "lucide-react";
 
 const ReportsPage = () => {
   const today = new Date();
@@ -50,14 +51,20 @@ const ReportsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight">Relatório Mensal</h1>
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-bold tracking-tight">Relatório Mensal</h1>
+          <p className="text-muted-foreground mt-1">
+            {monthNames[selectedMonth]} de {selectedYear}
+          </p>
+        </div>
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center bg-white/10 backdrop-blur-sm p-2 rounded-lg border border-border/30">
+          <CalendarIcon className="h-4 w-4 text-muted-foreground mr-1" />
           <Select 
             value={selectedMonth.toString()} 
             onValueChange={(value) => setSelectedMonth(parseInt(value))}
           >
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[160px] border-none bg-transparent shadow-none">
               <SelectValue placeholder="Selecione o mês" />
             </SelectTrigger>
             <SelectContent>
@@ -73,7 +80,7 @@ const ReportsPage = () => {
             value={selectedYear.toString()} 
             onValueChange={(value) => setSelectedYear(parseInt(value))}
           >
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[120px] border-none bg-transparent shadow-none">
               <SelectValue placeholder="Selecione o ano" />
             </SelectTrigger>
             <SelectContent>

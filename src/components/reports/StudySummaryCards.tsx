@@ -22,7 +22,7 @@ const StudySummaryCards = ({ month, year }: { month: number; year: number }) => 
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Card className="glass-card card-hover">
+      <Card className="glass-card border-purple-100/30 hover:border-purple-300/30 transition-colors">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Tempo Total
@@ -41,7 +41,7 @@ const StudySummaryCards = ({ month, year }: { month: number; year: number }) => 
         </CardContent>
       </Card>
       
-      <Card className="glass-card card-hover">
+      <Card className="glass-card border-blue-100/30 hover:border-blue-300/30 transition-colors">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Dias de Estudo
@@ -58,7 +58,7 @@ const StudySummaryCards = ({ month, year }: { month: number; year: number }) => 
         </CardContent>
       </Card>
       
-      <Card className="glass-card card-hover">
+      <Card className="glass-card border-purple-100/30 hover:border-purple-300/30 transition-colors">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Sessões
