@@ -57,10 +57,12 @@ const AppSidebar = () => {
       <SidebarHeader>
         <div className="flex items-center justify-between px-4 py-2">
           <div className="flex items-center space-x-2">
-            <div className="rounded-full bg-gradient-to-r from-purple-500 to-blue-500 p-1.5">
-              <Clock className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-xl font-bold">Studdy</h1>
+            <img 
+              src="/studdy-logo.png" 
+              alt="Studdy Logo" 
+              className="h-8 w-8 rounded-md" 
+            />
+            <h1 className="text-xl font-bold text-gray-800">Studdy</h1>
           </div>
           <SidebarTrigger />
         </div>
