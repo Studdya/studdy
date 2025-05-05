@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -10,18 +9,14 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
 const loginSchema = z.object({
   email: z.string().email("Digite um email válido"),
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres")
 });
-
 type LoginFormValues = z.infer<typeof loginSchema>;
-
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -29,7 +24,6 @@ const LoginPage = () => {
       password: ""
     }
   });
-
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
@@ -41,11 +35,9 @@ const LoginPage = () => {
         email: data.email,
         password: data.password
       });
-
       if (error) {
         throw new Error(error.message);
       }
-
       if (authData.session) {
         // Set authentication state
         localStorage.setItem('isAuthenticated', 'true');
@@ -63,21 +55,14 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
-
   const handleViewPricing = () => {
     window.open("https://studdy.framer.ai/#pricing", "_blank");
   };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <img 
-              src="/studdy-logo.png" 
-              alt="Studdy Logo" 
-              className="h-16 w-16"
-            />
+            <img alt="Studdy Logo" className="h-16 w-16" src="https://lh3.google.com/u/0/d/16MyFrMLVgg911ua-b7PHltexc8RbbEZA=w1920-h945-iv1?auditContext=prefetch" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Salve, Seja Bem-Vindo!</h2>
           <p className="mt-2 text-sm text-gray-600">
@@ -133,8 +118,6 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default LoginPage;
