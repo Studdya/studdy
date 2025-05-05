@@ -91,8 +91,8 @@ const StudyTimer = () => {
   
   return (
     <Card className="glass-card w-full max-w-3xl mx-auto rounded-xl">
-      <CardContent className="p-8 flex flex-col items-center">
-        <div className="flex flex-col md:flex-row w-full gap-4 mb-12">
+      <CardContent className="p-4 sm:p-8 flex flex-col items-center">
+        <div className="flex flex-col w-full gap-4 mb-8 sm:mb-12">
           <div className="flex-1">
             <label className="block text-sm font-medium mb-1">Matéria</label>
             <div className="flex space-x-2">
@@ -154,14 +154,14 @@ const StudyTimer = () => {
           </div>
         </div>
         
-        <div className="text-center mb-12">
-          <div className="text-7xl font-medium tracking-tighter mb-6">{formatTime(seconds)}</div>
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="text-4xl sm:text-7xl font-medium tracking-tighter mb-6">{formatTime(seconds)}</div>
           
-          <div className="flex gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
               size="lg"
               variant="outline" 
-              className={`px-8 py-6 rounded-full text-lg ${
+              className={`px-6 sm:px-8 py-5 sm:py-6 rounded-full text-base sm:text-lg w-full sm:w-auto ${
                 isRunning ? "border-red-400 text-red-600" : "border-green-400 text-green-600"
               }`}
               onClick={toggleTimer}
@@ -176,7 +176,7 @@ const StudyTimer = () => {
             <Button
               size="lg"
               variant="default"
-              className="gradient-purple-blue px-8 py-6 rounded-full text-lg"
+              className="gradient-purple-blue px-6 sm:px-8 py-5 sm:py-6 rounded-full text-base sm:text-lg w-full sm:w-auto"
               onClick={saveSession}
               disabled={seconds === 0 || !selectedSubject}
             >
