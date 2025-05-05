@@ -1,73 +1,21 @@
-# Welcome to your Lovable project
+Studdy – Plataforma de Organização de Estudos
+URL do projeto: https://studdy.framer.ai
 
-## Project info
+📚 Sobre o Studdy
+Studdy é uma plataforma web criada para ajudar estudantes a organizarem seus estudos por matéria, monitorar o tempo dedicado a cada conteúdo e acompanhar a produtividade com relatórios visuais. Ideal para quem está se preparando para vestibulares, concursos ou simplesmente quer otimizar a rotina de estudos.
 
-**URL**: https://lovable.dev/projects/00b5d37c-6292-417c-ad96-c6e87b345e7e
+O projeto foi desenvolvido com foco em desempenho, usabilidade e uma interface moderna.
 
-## How can I edit this code?
+🚀 Tecnologias utilizadas
+Vite – Empacotador de projeto moderno e ultrarrápido
 
-There are several ways of editing your application.
+React – Biblioteca para construção de interfaces reativas
 
-**Use Lovable**
+TypeScript – Tipagem estática para maior segurança e legibilidade no código
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/00b5d37c-6292-417c-ad96-c6e87b345e7e) and start prompting.
+Tailwind CSS – Utilitário de estilos para criação de interfaces responsivas
 
-Changes made via Lovable will be committed automatically to this repo.
+shadcn-ui – Componentes prontos e acessíveis com foco em produtividade
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/00b5d37c-6292-417c-ad96-c6e87b345e7e) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+🛠 Contribuindo
+Sinta-se à vontade para abrir issues, enviar PRs ou sugerir melhorias. Esse projeto é open-source e feito com carinho para a comunidade de estudantes.
