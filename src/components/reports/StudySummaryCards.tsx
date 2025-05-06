@@ -24,7 +24,7 @@ const StudySummaryCards = ({ month, year }: { month: number; year: number }) => 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card className="glass-card border-purple-100/30 hover:border-purple-300/30 transition-colors">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardTitle className="text-xl font-bold tracking-tight text-muted-foreground">
             Tempo Total
           </CardTitle>
         </CardHeader>
@@ -43,7 +43,7 @@ const StudySummaryCards = ({ month, year }: { month: number; year: number }) => 
       
       <Card className="glass-card border-blue-100/30 hover:border-blue-300/30 transition-colors">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardTitle className="text-xl font-bold tracking-tight text-muted-foreground">
             Dias de Estudo
           </CardTitle>
         </CardHeader>
@@ -60,7 +60,7 @@ const StudySummaryCards = ({ month, year }: { month: number; year: number }) => 
       
       <Card className="glass-card border-purple-100/30 hover:border-purple-300/30 transition-colors">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardTitle className="text-xl font-bold tracking-tight text-muted-foreground">
             Sessões
           </CardTitle>
         </CardHeader>

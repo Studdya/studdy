@@ -46,7 +46,7 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-muted-foreground" />
             Tempo por Matéria
           </CardTitle>
@@ -70,11 +70,46 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
     {}
   );
   
+  // Calculate percentages for each item for internal labels
+  data.forEach(item => {
+    item['percent'] = (item.actualDuration / totalTime) * 100;
+  });
+  
+  // Custom label renderer that shows percentage inside pie slices
+  const renderCustomizedLabel = (props: any) => {
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index } = props;
+    const RADIAN = Math.PI / 180;
+    
+    // Calculate label position
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    // Only show label for slices that are large enough to fit text
+    if (percent < 0.05) return null;
+    
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="#ffffff" 
+        textAnchor="middle" 
+        dominantBaseline="central"
+        fontSize="12"
+        fontWeight="bold"
+        stroke="#00000040"
+        strokeWidth={0.5}
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+  
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-muted-foreground" />
+        <CardTitle className="text-3xl font-bold tracking-tight flex items-center gap-2">
+          <BookOpen className="h-6 w-6 text-muted-foreground" />
           Tempo por Matéria
         </CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -94,9 +129,7 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
               dataKey="value"
               nameKey="name"
               labelLine={false}
-              label={({ name, percent }) => 
-                `${name} ${(percent * 100).toFixed(0)}%`
-              }
+              label={renderCustomizedLabel}
             >
               {data.map((entry, index) => (
                 <Cell 
@@ -127,7 +160,7 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
                         {formatTime(data.actualDuration)}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {`${(data.value / data.value * 100).toFixed(1)}% do total`}
+                        {`${data.percent.toFixed(1)}% do total`}
                       </p>
                     </div>
                   );
@@ -148,6 +181,12 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
                     {value}: {formatTime(payload.actualDuration)}
                   </span>
                 );
+              }}
+              wrapperStyle={{
+                paddingLeft: '10px',
+                maxHeight: '260px',
+                overflowY: 'auto',
+                scrollbarWidth: 'thin',
               }}
             />
           </PieChart>
