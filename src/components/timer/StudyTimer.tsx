@@ -27,14 +27,45 @@ const StudyTimer = () => {
   const [isAddSubjectDialogOpen, setIsAddSubjectDialogOpen] = useState(false);
   
   const intervalRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const elapsedTimeRef = useRef<number>(0);
   
   useEffect(() => {
+    // Synchronize the timer with visibility changes
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isRunning) {
+        // Tab is visible again, update the timer based on actual elapsed time
+        updateTimerOnVisibilityChange();
+      }
+    };
+    
+    // Add visibility change event listener
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     return () => {
+      // Clean up
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);
       }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [isRunning]);
+  
+  // Update timer when tab becomes visible again
+  const updateTimerOnVisibilityChange = () => {
+    if (!isRunning || startTimeRef.current === null) return;
+    
+    // Calculate elapsed time based on the real time difference
+    const now = Date.now();
+    const additionalSeconds = Math.floor((now - startTimeRef.current) / 1000);
+    
+    // Update elapsed time and seconds state
+    elapsedTimeRef.current = additionalSeconds;
+    setSeconds(additionalSeconds);
+    
+    // Reset start time to current time
+    startTimeRef.current = now;
+  };
   
   const toggleTimer = () => {
     if (!selectedSubject) {
@@ -43,12 +74,25 @@ const StudyTimer = () => {
     }
     
     if (isRunning) {
+      // Stop the timer
       if (intervalRef.current) window.clearInterval(intervalRef.current);
+      // Save the elapsed time
+      elapsedTimeRef.current = seconds;
+      startTimeRef.current = null;
       setIsRunning(false);
     } else {
+      // Start the timer
+      // Set the start time
+      const now = Date.now();
+      startTimeRef.current = now - elapsedTimeRef.current * 1000; // Adjust for previously elapsed time
+      
+      // Set up the interval
       intervalRef.current = window.setInterval(() => {
-        setSeconds(prevSeconds => prevSeconds + 1);
+        // Calculate seconds based on elapsed time
+        const currentElapsed = startTimeRef.current ? Math.floor((Date.now() - startTimeRef.current) / 1000) : 0;
+        setSeconds(currentElapsed);
       }, 1000);
+      
       setIsRunning(true);
       setSessionSaved(false);
     }
@@ -69,6 +113,8 @@ const StudyTimer = () => {
       });
       
       setSeconds(0);
+      elapsedTimeRef.current = 0;
+      startTimeRef.current = null;
       setIsRunning(false);
       setSessionSaved(true);
       
