@@ -76,9 +76,9 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
     item['percent'] = (item.actualDuration / totalTime) * 100;
   });
   
-  // Custom label renderer that shows percentage inside pie slices
+  // Custom label renderer that shows subject name inside pie slices
   const renderCustomizedLabel = (props: any) => {
-    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index } = props;
+    const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, name } = props;
     const RADIAN = Math.PI / 180;
     
     // Calculate label position
@@ -89,6 +89,9 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
     // Only show label for slices that are large enough to fit text
     if (percent < 0.05) return null;
     
+    // Get the subject name, truncate if too long
+    const subjectName = name.length > 8 ? `${name.substring(0, 8)}...` : name;
+    
     return (
       <text 
         x={x} 
@@ -96,12 +99,12 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
         fill="#ffffff" 
         textAnchor="middle" 
         dominantBaseline="central"
-        fontSize="12"
+        fontSize="11"
         fontWeight="bold"
         stroke="#00000040"
         strokeWidth={0.5}
       >
-        {`${(percent * 100).toFixed(1)}%`}
+        {subjectName}
       </text>
     );
   };
