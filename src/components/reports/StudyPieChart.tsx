@@ -1,9 +1,10 @@
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStudy } from "@/context/StudyContext";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { BookOpen } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ChartData {
   name: string;
@@ -100,8 +101,30 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
         stroke="#00000040"
         strokeWidth={0.5}
       >
-        {`${(percent * 100).toFixed(0)}%`}
+        {`${(percent * 100).toFixed(1)}%`}
       </text>
+    );
+  };
+  
+  // Custom renderer for legend items
+  const renderLegendItem = (props: any) => {
+    const { payload } = props;
+    return (
+      <ScrollArea className="h-[260px] pr-4">
+        <ul className="space-y-2">
+          {payload.map((entry: any, index: number) => (
+            <li key={`item-${index}`} className="flex items-center gap-2 text-xs">
+              <div 
+                className="w-2 h-2 rounded-full" 
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="truncate max-w-[140px]" title={entry.value}>
+                {entry.value}: {formatTime(entry.payload.actualDuration)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </ScrollArea>
     );
   };
   
@@ -169,25 +192,10 @@ const StudyPieChart = ({ month, year }: { month: number; year: number }) => {
               }}
             />
             <Legend 
+              content={renderLegendItem}
               layout="vertical"
-              verticalAlign="middle" 
               align="right"
-              iconType="circle"
-              iconSize={8}
-              formatter={(value, entry, index) => {
-                const { payload } = entry as any;
-                return (
-                  <span className="text-xs">
-                    {value}: {formatTime(payload.actualDuration)}
-                  </span>
-                );
-              }}
-              wrapperStyle={{
-                paddingLeft: '10px',
-                maxHeight: '260px',
-                overflowY: 'auto',
-                scrollbarWidth: 'thin',
-              }}
+              verticalAlign="middle"
             />
           </PieChart>
         </ChartContainer>
