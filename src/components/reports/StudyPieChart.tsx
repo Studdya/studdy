@@ -1,3 +1,4 @@
+
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStudy } from "@/context/StudyContext";
@@ -89,7 +90,7 @@ const StudyPieChart = ({
     // Only show label for slices that are large enough to fit text
     if (percent < 0.05) return null;
     return <text x={x} y={y} fill="#ffffff" textAnchor="middle" dominantBaseline="central" fontSize="12" fontWeight="bold" stroke="#00000040" strokeWidth={0.5}>
-        {`${(percent * 100).toFixed(0)}%`}
+        {`${(percent * 100).toFixed(1)}%`}
       </text>;
   };
   return <Card>
